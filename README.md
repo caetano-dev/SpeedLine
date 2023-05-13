@@ -40,7 +40,7 @@ To install SpeedLine, follow these steps:
 
 ```go build -o SpeedLine```
 
-5. Add the binary to your system's PATH for convenience. You can also bind a specific key to run the program.
+5. Add the binary to your system's PATH for convenience. You can also bind a specific key to run the program (if you see the gif, you'll see that mine is the letter "s").
 
 ## Contributing
 
