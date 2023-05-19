@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/drull1000/utils"
+	u "github.com/drull1000/SpeedLine/pkgs/utils"
 	"github.com/Knetic/govaluate"
 )
 
@@ -116,7 +116,7 @@ func convertUnits(input string) error {
 	fromUnit := strings.ToLower(matches[2])
 	toUnit := strings.ToLower(matches[3])
 
-	if conversionMap, ok := ConversionsTable[fromUnit]; ok {
+	if conversionMap, ok := u.ConversionsTable[fromUnit]; ok {
 		if conversionFunc, ok := conversionMap[toUnit]; ok {
 			result := conversionFunc(value)
 			fmt.Printf("%.2f %s", result, toUnit)
