@@ -1,4 +1,4 @@
-module SpeedLine
+module github.com/drull1000/SpeedLine
 
 go 1.20
 
