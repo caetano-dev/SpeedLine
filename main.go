@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/drull1000/utils"
 	"github.com/Knetic/govaluate"
 )
 
@@ -115,72 +116,13 @@ func convertUnits(input string) error {
 	fromUnit := strings.ToLower(matches[2])
 	toUnit := strings.ToLower(matches[3])
 
-	switch {
-	case fromUnit == "hours" && toUnit == "days":
-		result := value / 24
-		fmt.Printf("%.2f days", result)
-		return nil
-	case fromUnit == "hours" && toUnit == "seconds":
-		result := value * 3600
-		fmt.Printf("%.2f seconds", result)
-		return nil
-	case fromUnit == "hours" && toUnit == "minutes":
-		result := value * 60
-		fmt.Printf("%.2f minutes", result)
-		return nil
-	case fromUnit == "days" && toUnit == "hours":
-		result := value * 24
-		fmt.Printf("%.2f hours", result)
-		return nil
-	case fromUnit == "seconds" && toUnit == "hours":
-		result := value / 3600
-		fmt.Printf("%.2f hours", result)
-		return nil
-	case fromUnit == "minutes" && toUnit == "hours":
-		result := value / 60
-		fmt.Printf("%.2f hours", result)
-		return nil
-	case fromUnit == "km/h" && toUnit == "m/s":
-		result := value * 0.277778
-		fmt.Printf("%.2f m/s", result)
-		return nil
-	case fromUnit == "m/s" && toUnit == "km/h":
-		result := value * 3.6
-		fmt.Printf("%.2f km/h", result)
-		return nil
-	case fromUnit == "bytes" && toUnit == "kb":
-		result := value / 1024
-		fmt.Printf("%.2f KB", result)
-		return nil
-	case fromUnit == "bytes" && toUnit == "mb":
-		result := value / 1024 / 1024
-		fmt.Printf("%.2f MB", result)
-		return nil
-	case fromUnit == "bytes" && toUnit == "gb":
-		result := value / 1024 / 1024 / 1024
-		fmt.Printf("%.2f GB", result)
-		return nil
-	case fromUnit == "bytes" && toUnit == "tb":
-		result := value / 1024 / 1024 / 1024 / 1024
-		fmt.Printf("%.2f TB", result)
-		return nil
-	case fromUnit == "kb" && toUnit == "bytes":
-		result := value * 1024
-		fmt.Printf("%.2f bytes", result)
-		return nil
-	case fromUnit == "mb" && toUnit == "bytes":
-		result := value * 1024 * 1024
-		fmt.Printf("%.2f bytes", result)
-		return nil
-	case fromUnit == "gb" && toUnit == "bytes":
-		result := value * 1024 * 1024 * 1024
-		fmt.Printf("%.2f bytes", result)
-		return nil
-	case fromUnit == "tb" && toUnit == "bytes":
-		result := value * 1024 * 1024 * 1024 * 1024
-		fmt.Printf("%.2f bytes", result)
-		return nil
-	default:
-		return fmt.Errorf("unsupported unit conversion")
+	if conversionMap, ok := u.ConversionsTable[fromUnit]; ok {
+		if conversionFunc, ok := conversionMap[toUnit]; ok {
+			result := conversionFunc(value)
+			fmt.Printf("%.2f %s", result, toUnit)
+			return nil
+		}
 	}
+
+	return fmt.Errorf("unsupported unit conversion")
 }
