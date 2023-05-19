@@ -20,11 +20,14 @@ func main() {
 
 	input := strings.Join(os.Args[1:], " ")
 
-	if isMathExpression(input) {
+	switch {
+	case isMathExpression(input):
 		evaluateExpression(input)
-	} else if isURL(input) {
+	case isURL(input):
 		openURL(input)
-	} else {
+	case isUsername(input):
+		searchUsername(input)
+	default:
 		searchPrompt(input)
 	}
 }
@@ -70,4 +73,21 @@ func searchPrompt(prompt string) {
 	if err != nil {
 		log.Fatalf("Error opening the browser: %v", err)
 	}
+}
+
+func isUsername(input string) bool {
+	usernameRegex := regexp.MustCompile(`^(@)?[a-zA-Z0-9_]+$`)
+	return usernameRegex.MatchString(input)
+}
+
+func searchUsername(username string) {
+	username = strings.ReplaceAll(username, "@", "")
+	query := url.QueryEscape(username)
+	searchURL := fmt.Sprintf("https://www.twitter.com/%s", query)
+	cmd := exec.Command("firefox", searchURL)
+	err := cmd.Start()
+	if err != nil {
+		log.Fatalf("Error opening the browser: %v", err)
+	}
+
 }
