@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/Knetic/govaluate"
@@ -27,6 +28,8 @@ func main() {
 		openURL(input)
 	case isUsername(input):
 		searchUsername(input)
+	case isUnit(input):
+		convertUnits(input)
 	default:
 		searchPrompt(input)
 	}
@@ -90,4 +93,94 @@ func searchUsername(username string) {
 		log.Fatalf("Error opening the browser: %v", err)
 	}
 
+}
+
+func isUnit(input string) bool {
+	conversionRegex := regexp.MustCompile(`([\d.]+)\s*([a-zA-Z/]+)\s+into\s+([a-zA-Z/]+)`)
+	return conversionRegex.MatchString(input)
+}
+
+func convertUnits(input string) error {
+	conversionRegex := regexp.MustCompile(`([\d.]+)\s*([a-zA-Z/]+)\s+into\s+([a-zA-Z/]+)`)
+	matches := conversionRegex.FindStringSubmatch(input)
+	if len(matches) != 4 {
+		return fmt.Errorf("invalid input format")
+	}
+
+	value, err := strconv.ParseFloat(matches[1], 64)
+	if err != nil {
+		return fmt.Errorf("invalid value: %v", err)
+	}
+
+	fromUnit := strings.ToLower(matches[2])
+	toUnit := strings.ToLower(matches[3])
+
+	switch {
+	case fromUnit == "hours" && toUnit == "days":
+		result := value / 24
+		fmt.Printf("%.2f days", result)
+		return nil
+	case fromUnit == "hours" && toUnit == "seconds":
+		result := value * 3600
+		fmt.Printf("%.2f seconds", result)
+		return nil
+	case fromUnit == "hours" && toUnit == "minutes":
+		result := value * 60
+		fmt.Printf("%.2f minutes", result)
+		return nil
+	case fromUnit == "days" && toUnit == "hours":
+		result := value * 24
+		fmt.Printf("%.2f hours", result)
+		return nil
+	case fromUnit == "seconds" && toUnit == "hours":
+		result := value / 3600
+		fmt.Printf("%.2f hours", result)
+		return nil
+	case fromUnit == "minutes" && toUnit == "hours":
+		result := value / 60
+		fmt.Printf("%.2f hours", result)
+		return nil
+	case fromUnit == "km/h" && toUnit == "m/s":
+		result := value * 0.277778
+		fmt.Printf("%.2f m/s", result)
+		return nil
+	case fromUnit == "m/s" && toUnit == "km/h":
+		result := value * 3.6
+		fmt.Printf("%.2f km/h", result)
+		return nil
+	case fromUnit == "bytes" && toUnit == "kb":
+		result := value / 1024
+		fmt.Printf("%.2f KB", result)
+		return nil
+	case fromUnit == "bytes" && toUnit == "mb":
+		result := value / 1024 / 1024
+		fmt.Printf("%.2f MB", result)
+		return nil
+	case fromUnit == "bytes" && toUnit == "gb":
+		result := value / 1024 / 1024 / 1024
+		fmt.Printf("%.2f GB", result)
+		return nil
+	case fromUnit == "bytes" && toUnit == "tb":
+		result := value / 1024 / 1024 / 1024 / 1024
+		fmt.Printf("%.2f TB", result)
+		return nil
+	case fromUnit == "kb" && toUnit == "bytes":
+		result := value * 1024
+		fmt.Printf("%.2f bytes", result)
+		return nil
+	case fromUnit == "mb" && toUnit == "bytes":
+		result := value * 1024 * 1024
+		fmt.Printf("%.2f bytes", result)
+		return nil
+	case fromUnit == "gb" && toUnit == "bytes":
+		result := value * 1024 * 1024 * 1024
+		fmt.Printf("%.2f bytes", result)
+		return nil
+	case fromUnit == "tb" && toUnit == "bytes":
+		result := value * 1024 * 1024 * 1024 * 1024
+		fmt.Printf("%.2f bytes", result)
+		return nil
+	default:
+		return fmt.Errorf("unsupported unit conversion")
+	}
 }
