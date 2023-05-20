@@ -80,7 +80,7 @@ func searchPrompt(prompt string) {
 }
 
 func isUsername(input string) bool {
-	usernameRegex := regexp.MustCompile(`^(@)?[a-zA-Z0-9_]+$`)
+	usernameRegex := regexp.MustCompile(`^(@[a-zA-Z0-9_]+)$`)
 	return usernameRegex.MatchString(input)
 }
 
